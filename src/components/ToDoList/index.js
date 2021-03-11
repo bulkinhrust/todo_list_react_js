@@ -1,4 +1,6 @@
 import ToDoItem from '../ToDoItem';
+import PropTypes from 'prop-types';
+
 import './styles.scss';
 
 const ToDoList = ({ tasks, handleChangeCompleted, handleTaskDelete }) => {
@@ -14,6 +16,16 @@ const ToDoList = ({ tasks, handleChangeCompleted, handleTaskDelete }) => {
       }
     </div>
   )
+};
+
+ToDoList.propTypes = {
+  tasks: PropTypes.arrayOf(PropTypes.object),
+  handleChangeCompleted: PropTypes.func.isRequired,
+  handleTaskDelete: PropTypes.func.isRequired,
+};
+
+ToDoList.defaultProps = {
+  tasks: [],
 };
 
 export default ToDoList;
