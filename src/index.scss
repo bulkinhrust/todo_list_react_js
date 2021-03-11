@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Caveat:wght@400;500;700&display=swap');
+@import "Assets/constants";
 
 * {
   box-sizing: border-box;
@@ -8,7 +9,7 @@
 
 body {
   height: 100%;
-  background: #4d2a16;
+  background: $dark-brown;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
   sans-serif;

@@ -1,8 +1,10 @@
+@import "Assets/constants";
+
 .title {
   font-family: 'Caveat', cursive;
   font-size: 80px;
   text-align: center;
   font-weight: 900;
-  color: #976f4f;
+  color: $brown;
   margin: 40px 0 20px;
 }

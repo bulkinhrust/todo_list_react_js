@@ -1,6 +1,12 @@
+@import "Assets/constants";
+
 .wrapper {
   font-family: 'Caveat', cursive;
+  font-size: 20px;
   border-radius: 10px;
   background-color: #fff;
-  color: #002a29;
+  color: $dark-green;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
