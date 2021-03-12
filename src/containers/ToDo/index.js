@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import ToDoList from 'Components/ToDoList';
+import ToDoInput from 'Components/ToDoInput';
+import Footer from 'Components/Footer';
 
 import './styles.scss';
 
@@ -11,6 +13,9 @@ const TASKS = [
 
 function ToDo() {
   const [tasks, changeTasks] = useState(TASKS);
+  const [taskName, changeTaskName] = useState('');
+  const [isError, changeInputError] = useState(false);
+  const [filter, changeFilter] = useState('all');
   const handleChangeCompleted = (id) => {
     changeTasks(tasks.map((task) => task.id === id
       ? {...task, isCompleted: !task.isCompleted}
@@ -22,13 +27,46 @@ function ToDo() {
     changeTasks(tasks.filter((task) => task.id !== id));
   };
 
+  const addNewTask = () => {
+    if (taskName.length <= 3) {
+      changeInputError(true);
+      return;
+    }
+    changeTasks(tasks.concat({
+      id: (new Date()).getTime(),
+      title: taskName,
+      isCompleted: false,
+    }));
+    changeTaskName('');
+  };
+
+  const handleInputKeyPress = ({ key }) => {
+    if (key === 'Enter') {
+      addNewTask();
+    }
+    if (key !== 'Enter' && taskName.length >= 3 && isError) {
+      changeInputError(false);
+    }
+  };
+
+  const clearCompletedTasks = () => {
+    changeTasks(tasks.filter((task) => !task.isCompleted));
+  };
+
   return (
     <div className='wrapper'>
-      <div>input</div>
+      <ToDoInput value={taskName}
+                 isError={isError}
+                 handleInputChange={changeTaskName}
+                 handleInputKeyPress={handleInputKeyPress}
+                 addNewTask={addNewTask} />
       <ToDoList tasks={tasks}
                 handleChangeCompleted={handleChangeCompleted}
                 handleTaskDelete={handleTaskDelete} />
-      <div>analytic and clear all/done</div>
+      <Footer tasksCount={tasks.filter((t) => !t.isCompleted).length}
+              filter={filter}
+              changeFilter={changeFilter}
+              clearCompletedTasks={clearCompletedTasks}/>
     </div>
   );
 }

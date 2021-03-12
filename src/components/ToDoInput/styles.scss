@@ -1,0 +1,57 @@
+@import "Assets/constants";
+
+.todo__input {
+  width: 60%;
+  display: grid;
+  height: 70px;
+  grid-template-columns: 90% 10%;
+  grid-template-rows: 50px;
+  margin-top: 10px;
+
+  input {
+    font-family: 'Caveat', cursive;
+    padding: 0 20px;
+    font-size: 1.1em;
+    color: $dark-green;
+    border-radius: 3px 0 0 3px;
+
+    &:focus {
+      border: 2px solid $green;
+      outline: none;
+    }
+  }
+
+  button {
+    font-family: 'Caveat Brush', cursive;
+    font-size: 20px;
+    border-radius: 0 3px 3px 0;
+    background-color: $green;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      background-color: darken($green, 3%);
+    }
+
+    &:active {
+      background-color: darken($green, 10%);
+    }
+  }
+}
+
+.error {
+  input {
+    border: 2px solid #CB0000 !important;
+  }
+
+  &__message {
+    color: #CB0000;
+    font-family: 'Handlee', cursive;
+    font-size: 0.8em;
+  }
+}
