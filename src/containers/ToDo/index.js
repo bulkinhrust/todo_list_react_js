@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ToDoList from 'Components/ToDoList';
 import ToDoInput from 'Components/ToDoInput';
+import Footer from 'Components/Footer';
 
 import './styles.scss';
 
@@ -14,6 +15,7 @@ function ToDo() {
   const [tasks, changeTasks] = useState(TASKS);
   const [taskName, changeTaskName] = useState('');
   const [isError, changeInputError] = useState(false);
+  const [filter, changeFilter] = useState('all');
   const handleChangeCompleted = (id) => {
     changeTasks(tasks.map((task) => task.id === id
       ? {...task, isCompleted: !task.isCompleted}
@@ -47,6 +49,10 @@ function ToDo() {
     }
   };
 
+  const clearCompletedTasks = () => {
+    changeTasks(tasks.filter((task) => !task.isCompleted));
+  };
+
   return (
     <div className='wrapper'>
       <ToDoInput value={taskName}
@@ -57,7 +63,10 @@ function ToDo() {
       <ToDoList tasks={tasks}
                 handleChangeCompleted={handleChangeCompleted}
                 handleTaskDelete={handleTaskDelete} />
-      <div>analytic and clear all/done</div>
+      <Footer tasksCount={tasks.filter((t) => !t.isCompleted).length}
+              filter={filter}
+              changeFilter={changeFilter}
+              clearCompletedTasks={clearCompletedTasks}/>
     </div>
   );
 }
