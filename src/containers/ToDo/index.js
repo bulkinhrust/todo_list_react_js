@@ -1,40 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchTasks,
+  addTask,
+  removeTask,
+  completeTask,
+  clearCompletedTasks
+} from 'Redux/reducers/tasks';
+import { changeFilter } from 'Redux/reducers/filter';
 import ToDoList from 'Components/ToDoList';
 import ToDoInput from 'Components/ToDoInput';
 import Footer from 'Components/Footer';
+import Spinner from 'Components/Spinner';
 
 import './styles.scss';
 
-const TASKS = [
-  { id: 1, title: 'add todo list', isCompleted: true },
-  { id: 2, title: 'add todo input', isCompleted: false },
-  { id: 3, title: 'add todo analytic', isCompleted: false },
-];
-
 function ToDo() {
-  const [tasks, changeTasks] = useState(TASKS);
+  const { isLoading, tasks, filter } = useSelector(({ tasks, filter}) => ({
+    isLoading: tasks.isLoading,
+    tasks: tasks.tasks,
+    filter
+  }));
+  const dispatch = useDispatch();
   const [taskName, changeTaskName] = useState('');
   const [isError, changeInputError] = useState(false);
-  const [filter, changeFilter] = useState('all');
-  const handleChangeCompleted = (id) => {
-    changeTasks(tasks.map((task) => task.id === id
-      ? {...task, isCompleted: !task.isCompleted}
-      : task
-    ));
-  };
 
-  const handleTaskDelete = (id) => {
-    changeTasks(tasks.filter((task) => task.id !== id));
-  };
+  useEffect(() => {
+      dispatch(fetchTasks());
+    },
+    [dispatch]
+  );
 
   const addNewTask = () => {
-    if (taskName.length <= 3) {
+    if (taskName.trim().length <= 3) {
       changeInputError(true);
       return;
     }
-    changeTasks(tasks.concat({
+    dispatch(addTask({
       id: (new Date()).getTime(),
-      title: taskName,
+      title: taskName.trim(),
       isCompleted: false,
     }));
     changeTaskName('');
@@ -49,8 +53,15 @@ function ToDo() {
     }
   };
 
-  const clearCompletedTasks = () => {
-    changeTasks(tasks.filter((task) => !task.isCompleted));
+  const filterTasks = (tasks, activeFilter) => {
+    switch (activeFilter) {
+      case 'completed':
+        return tasks.filter(task => task.isCompleted);
+      case 'active':
+        return tasks.filter(task => !task.isCompleted);
+      default:
+        return tasks;
+    }
   };
 
   return (
@@ -60,13 +71,16 @@ function ToDo() {
                  handleInputChange={changeTaskName}
                  handleInputKeyPress={handleInputKeyPress}
                  addNewTask={addNewTask} />
-      <ToDoList tasks={tasks}
-                handleChangeCompleted={handleChangeCompleted}
-                handleTaskDelete={handleTaskDelete} />
+      {isLoading
+        ? <Spinner />
+        : <ToDoList tasks={filterTasks(tasks, filter)}
+                    handleChangeCompleted={(id) => dispatch(completeTask(id))}
+                    handleTaskDelete={(id) => dispatch(removeTask(id))} />
+      }
       <Footer tasksCount={tasks.filter((t) => !t.isCompleted).length}
               filter={filter}
-              changeFilter={changeFilter}
-              clearCompletedTasks={clearCompletedTasks}/>
+              changeFilter={(filter) => dispatch(changeFilter(filter))}
+              clearCompletedTasks={() => dispatch(clearCompletedTasks())}/>
     </div>
   );
 }
