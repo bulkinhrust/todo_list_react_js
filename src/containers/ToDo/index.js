@@ -25,7 +25,11 @@ function ToDo() {
   const [taskName, changeTaskName] = useState('');
   const [isError, changeInputError] = useState(false);
 
-  useEffect(() => dispatch(fetchTasks()), []);
+  useEffect(() => {
+      dispatch(fetchTasks());
+    },
+    [dispatch]
+  );
 
   const addNewTask = () => {
     if (taskName.trim().length <= 3) {

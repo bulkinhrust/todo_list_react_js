@@ -22,10 +22,7 @@ const initialState = {
 };
 
 export default createReducer({
-  [LOADING_CHANGE]: (state, { payload: isLoading }) => {
-    console.log('isLoading = ', isLoading)
-    return ({...state, isLoading})
-  },
+  [LOADING_CHANGE]: (state, { payload: isLoading }) => ({...state, isLoading}),
   [SET_TASKS]: (state, { payload: tasks }) => ({...state, tasks: [...tasks]}),
   [ADD_TASK]: (state, { payload: task }) => ({
     ...state,
