@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchTasks,
   addTask,
@@ -11,38 +11,32 @@ import { changeFilter } from 'Redux/reducers/filter';
 import ToDoList from 'Components/ToDoList';
 import ToDoInput from 'Components/ToDoInput';
 import Footer from 'Components/Footer';
+import Spinner from 'Components/Spinner';
 
 import './styles.scss';
 
-function ToDo(
-  {
-    tasks, filter, fetchTasks,
-    addTask, removeTask, completeTask, clearCompletedTasks, changeFilter
-  }
-) {
+function ToDo() {
+  const { isLoading, tasks, filter } = useSelector(({ tasks, filter}) => ({
+    isLoading: tasks.isLoading,
+    tasks: tasks.tasks,
+    filter
+  }));
+  const dispatch = useDispatch();
   const [taskName, changeTaskName] = useState('');
   const [isError, changeInputError] = useState(false);
 
-  useEffect(
-    () => {
-      fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
-        .then(res => res.json())
-        .then(tasks => fetchTasks(tasks))
-        .catch((e) => console.error(e))
-    },
-    []
-  );
+  useEffect(() => dispatch(fetchTasks()), []);
 
   const addNewTask = () => {
     if (taskName.trim().length <= 3) {
       changeInputError(true);
       return;
     }
-    addTask({
+    dispatch(addTask({
       id: (new Date()).getTime(),
       title: taskName.trim(),
       isCompleted: false,
-    });
+    }));
     changeTaskName('');
   };
 
@@ -73,28 +67,18 @@ function ToDo(
                  handleInputChange={changeTaskName}
                  handleInputKeyPress={handleInputKeyPress}
                  addNewTask={addNewTask} />
-      <ToDoList tasks={filterTasks(tasks, filter)}
-                handleChangeCompleted={completeTask}
-                handleTaskDelete={removeTask} />
+      {isLoading
+        ? <Spinner />
+        : <ToDoList tasks={filterTasks(tasks, filter)}
+                    handleChangeCompleted={(id) => dispatch(completeTask(id))}
+                    handleTaskDelete={(id) => dispatch(removeTask(id))} />
+      }
       <Footer tasksCount={tasks.filter((t) => !t.isCompleted).length}
               filter={filter}
-              changeFilter={changeFilter}
-              clearCompletedTasks={clearCompletedTasks}/>
+              changeFilter={(filter) => dispatch(changeFilter(filter))}
+              clearCompletedTasks={() => dispatch(clearCompletedTasks())}/>
     </div>
   );
 }
 
-export default connect(
-  ({ tasks, filter }) => ({
-    tasks,
-    filter
-  }),
-  {
-    fetchTasks,
-    addTask,
-    removeTask,
-    completeTask,
-    clearCompletedTasks,
-    changeFilter
-  }
-)(ToDo);
+export default ToDo;
